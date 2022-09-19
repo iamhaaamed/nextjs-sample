@@ -1,3 +1,4 @@
+import axios from 'axios';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -5,8 +6,24 @@ import { useState } from 'react';
 
 import { Meta } from '@/layouts/Meta';
 import { Main } from '@/templates/Main';
+import type { Blog } from '@/types/Blog';
+import type { Program } from '@/types/Program';
 
-const Index = () => {
+export const getServerSideProps = async () => {
+  const finalDataResult = [
+    await axios.get('http://localhost:3000/api/programs/'),
+    await axios.get('http://localhost:3000/api/blogs/'),
+  ];
+
+  return {
+    props: {
+      programs: finalDataResult[0]?.data.data ?? [],
+      blogs: finalDataResult[1]?.data.data ?? [],
+    },
+  };
+};
+
+const Index = ({ programs, blogs }: { programs: Program[]; blogs: Blog[] }) => {
   const router = useRouter();
 
   const [sliderImages, setSliderImages] = useState([
@@ -135,7 +152,7 @@ const Index = () => {
 
       <div className="my-10 flex flex-col items-center sm:my-16">
         <div className="mb-2 text-6xl font-bold">
-          Our <span className="border-b-8 border-b-orange-500">Programs</span>
+          Our <span className="border-b-8 border-b-orange-500">blogs</span>
         </div>
         <div className="text-center  text-sm sm:w-96">
           Tortor sit nisl purus nunc massa diam velit hac in. Nisl, sem
@@ -146,52 +163,20 @@ const Index = () => {
       </div>
 
       <div className="my-8 grid grid-cols-1 sm:my-20 sm:grid-cols-2">
-        {[
-          {
-            title: 'Program Name',
-            desc: `Sagittis, eu pretium massa quisque cursus augue massa cursus. Sed
-              quisque velit, auctor at lobortis hac tincidunt sodales id. Elit
-              interdum vel nisi, in enim sagittis at. Netus sagittis eleifend
-              aliquet urna quis.`,
-            img: 'https://api.lorem.space/image/face?w=200&h=200',
-          },
-          {
-            title: 'Program Name',
-            desc: `Sagittis, eu pretium massa quisque cursus augue massa cursus. Sed
-              quisque velit, auctor at lobortis hac tincidunt sodales id. Elit
-              interdum vel nisi, in enim sagittis at. Netus sagittis eleifend
-              aliquet urna quis.`,
-            img: 'https://api.lorem.space/image/face?w=200&h=200',
-          },
-          {
-            title: 'Program Name',
-            desc: `Sagittis, eu pretium massa quisque cursus augue massa cursus. Sed
-              quisque velit, auctor at lobortis hac tincidunt sodales id. Elit
-              interdum vel nisi, in enim sagittis at. Netus sagittis eleifend
-              aliquet urna quis.`,
-            img: 'https://api.lorem.space/image/face?w=200&h=200',
-          },
-          {
-            title: 'Program Name',
-            desc: `Sagittis, eu pretium massa quisque cursus augue massa cursus. Sed
-              quisque velit, auctor at lobortis hac tincidunt sodales id. Elit
-              interdum vel nisi, in enim sagittis at. Netus sagittis eleifend
-              aliquet urna quis.`,
-            img: 'https://api.lorem.space/image/face?w=200&h=200',
-          },
-        ].map(({ title, desc, img }) => (
-          <div key={title} className="mt-2 flex flex-row">
-            <Image width={200} height={200} src={img} alt="Pimgrogram Name" />
+        {programs &&
+          programs?.map(({ title, desc, img }) => (
+            <div key={title} className="mt-2 flex flex-row">
+              <Image width={200} height={200} src={img} alt="Program Name" />
 
-            <div className="pl-4">
-              <div className="text-3xl font-bold">Program Name</div>
-              <div className="text-sm">{desc}</div>
-              <button className="mt-4 bg-orange-600  px-8  text-white">
-                <span className=" text-sm font-bold">Small</span>
-              </button>
+              <div className="pl-4">
+                <div className="text-3xl font-bold">{title}</div>
+                <div className="text-sm">{desc}</div>
+                <button className="mt-4 bg-orange-600  px-8  text-white">
+                  <span className=" text-sm font-bold">Small</span>
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
       </div>
 
       <div className="mt-14 text-center">
@@ -307,49 +292,12 @@ const Index = () => {
       </div>
 
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-5 ">
-        {[
-          {
-            img: 'https://api.lorem.space/image/face?w=700&h=527',
-            title: 'Blog',
-            subtitle: 'Blog title',
-            desc: `Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sunt, modi
-            maxime possimus nam earum hic quia reprehenderit iusto dicta
-            recusandae id tenetur minus vero, at officiis explicabo veritatis
-            quae similique.`,
-          },
-          {
-            img: 'https://api.lorem.space/image/face?w=700&h=527',
-            title: 'Blog',
-            subtitle: 'Blog title',
-            desc: `Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sunt, modi
-            maxime possimus nam earum hic quia reprehenderit iusto dicta
-            recusandae id tenetur minus vero, at officiis explicabo veritatis
-            quae similique.`,
-          },
-          {
-            img: 'https://api.lorem.space/image/face?w=700&h=527',
-            title: 'Blog',
-            subtitle: 'Blog title',
-            desc: `Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sunt, modi
-            maxime possimus nam earum hic quia reprehenderit iusto dicta
-            recusandae id tenetur minus vero, at officiis explicabo veritatis
-            quae similique.`,
-          },
-          {
-            img: 'https://api.lorem.space/image/face?w=700&h=527',
-            title: 'Blog',
-            subtitle: 'Blog title',
-            desc: `Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sunt, modi
-            maxime possimus nam earum hic quia reprehenderit iusto dicta
-            recusandae id tenetur minus vero, at officiis explicabo veritatis
-            quae similique.`,
-          },
-        ].map((item) => (
+        {blogs.map((item) => (
           <div key={item.title} className="">
             <Image alt={item.img} width={700} height={527} src={item.img} />
             <div className="my-4">
               <div className="text-lg">{item.title}</div>
-              <div className="text-xl font-bold">{item.subtitle}</div>
+              <div className="text-xl font-bold">{item.subTitle}</div>
             </div>
             <div className="text-base">{item.desc}</div>
             <div className="mt-8 mb-16 flex justify-center">
